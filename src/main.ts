@@ -1,3 +1,7 @@
+// Firebase
+import { init } from '@/firebase'
+init()
+
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
