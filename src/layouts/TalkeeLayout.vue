@@ -4,8 +4,8 @@
       <v-container class="fill-height d-flex align-center">
         <v-avatar class="me-10 ms-4" color="grey-darken-1" size="32"></v-avatar>
 
-        <v-btn v-for="link in links" :key="link" variant="text">
-          {{ link }}
+        <v-btn v-for="link in links" :to="link" :key="link.name" variant="text">
+          {{ link.text }}
         </v-btn>
 
         <v-spacer></v-spacer>
@@ -48,6 +48,16 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { CREATE_CHANNEL, VIEW_CHANNEL, SIGN_IN, SIGN_OUT, HOME } from '@/router/namedRoutes'
+import type { RouteLocationNamedRaw } from 'vue-router'
 
-const links = ref(['Dashboard', 'Messages', 'Profile', 'Updates'])
+type NavigationLink = RouteLocationNamedRaw & { text: string }
+
+const links = ref<NavigationLink[]>([
+  { name: HOME, text: 'Home' },
+  { name: CREATE_CHANNEL, text: 'Create Channel' },
+  { name: VIEW_CHANNEL, params: { id: 'asdf' }, text: 'View Channel' },
+  { name: SIGN_IN, text: 'Sign In' },
+  { name: SIGN_OUT, text: 'Sign Out' }
+])
 </script>

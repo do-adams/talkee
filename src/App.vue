@@ -1,13 +1,13 @@
 <template>
   <v-app>
     <v-main>
-      <default-layout>
+      <talkee-layout>
         <router-view />
-      </default-layout>
+      </talkee-layout>
     </v-main>
   </v-app>
 </template>
 
 <script setup lang="ts">
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import TalkeeLayout from '@/layouts/TalkeeLayout.vue'
 </script>
