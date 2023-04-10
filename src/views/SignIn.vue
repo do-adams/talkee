@@ -114,8 +114,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword
 } from 'firebase/auth'
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { requiredRule, emailRule, minLengthRule } from '@/utils/validators'
 import { templateRef } from '@vueuse/core'
 import { nextTick } from 'vue'
@@ -124,7 +124,12 @@ import { FirebaseError } from 'firebase/app'
 import { HOME } from '@/router/namedRoutes'
 
 const auth = getAuth()
+
+const route = useRoute()
 const router = useRouter()
+const redirectTo = computed(() =>
+  route.query.redirect_to ? { path: route.query.redirect_to } : { name: HOME }
+)
 
 const formSectionElem = templateRef<HTMLElement | null>('formSection')
 const formComponent = templateRef<InstanceType<typeof VForm> | null>('formComponent')
@@ -155,7 +160,7 @@ const onSignInAnonymously = async () => {
 
     await signInAnonymously(auth)
 
-    router.push({ name: HOME })
+    router.push(redirectTo.value)
   } catch (error) {
     if (error instanceof FirebaseError) {
       form.error = error.message
@@ -178,7 +183,7 @@ const onSignInOrSignUp = async () => {
       await signInWithEmailAndPassword(auth, form.email, form.password)
     }
 
-    router.push({ name: HOME })
+    router.push(redirectTo.value)
   } catch (error) {
     if (error instanceof FirebaseError) {
       if (isSigningUp.value) {
