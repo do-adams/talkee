@@ -1,19 +1,10 @@
-// Mock Firebase Auth API
-const getAuth = vi.fn(() => ({})),
-  signInAnonymously = vi.fn(),
-  signInWithEmailAndPassword = vi.fn(),
-  createUserWithEmailAndPassword = vi.fn()
+import {
+  signInAnonymously,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from '@/vitest/mocks/mockFirebaseAuth'
 
-vi.mock('firebase/auth', () => {
-  return {
-    getAuth,
-    signInAnonymously,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword
-  }
-})
-
-// Import after hoisted module mocks
+// Import after mocks
 import { render, fireEvent, screen } from '@/vitest/testing-library'
 import SignIn from '@/views/SignIn.vue'
 import { nextTick } from 'vue'
