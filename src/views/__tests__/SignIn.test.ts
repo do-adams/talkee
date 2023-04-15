@@ -37,7 +37,7 @@ describe('SignIn', () => {
   })
 
   describe('Sign In', () => {
-    it('User can toggle the sign up form', async () => {
+    test('User can toggle the sign up form', async () => {
       render(SignIn)
 
       const toggle = await screen.findByText(matchers.toggleSignUp)
@@ -49,7 +49,7 @@ describe('SignIn', () => {
       await screen.findByLabelText(matchers.confirmPasswordField)
     })
 
-    it('User can sign in anonymously', async () => {
+    test('User can sign in anonymously', async () => {
       render(SignIn)
 
       const button = await screen.findByText(matchers.signInAnonymouslyButton)
@@ -75,7 +75,7 @@ describe('SignIn', () => {
       await screen.findByText(matchers.signInErrorMessage)
     })
 
-    it('User can sign in with valid email and password', async () => {
+    test('User can sign in with valid email and password', async () => {
       render(SignIn)
 
       const emailField: HTMLInputElement = await screen.findByLabelText(matchers.emailField)
@@ -100,7 +100,7 @@ describe('SignIn', () => {
       expect(signInWithEmailAndPassword).toHaveBeenCalledOnce()
     })
 
-    it('User cannot sign in with an invalid email and password', async () => {
+    test('User cannot sign in with an invalid email and password', async () => {
       render(SignIn)
 
       const emailField: HTMLInputElement = await screen.findByLabelText(matchers.emailField)
@@ -162,7 +162,7 @@ describe('SignIn', () => {
   })
 
   describe('Sign Up', () => {
-    it('User can toggle the sign in form', async () => {
+    test('User can toggle the sign in form', async () => {
       render(SignIn)
 
       let toggle = await screen.findByText(matchers.toggleSignUp)
@@ -181,7 +181,7 @@ describe('SignIn', () => {
       expect(confirmPasswordField).toBeNull()
     })
 
-    it('User can sign in with valid email and password', async () => {
+    test('User can sign in with valid email and password', async () => {
       render(SignIn)
 
       const toggle = await screen.findByText(matchers.toggleSignUp)
@@ -214,7 +214,7 @@ describe('SignIn', () => {
       expect(createUserWithEmailAndPassword).toHaveBeenCalledOnce()
     })
 
-    it('User cannot sign up with an invalid email and password', async () => {
+    test('User cannot sign up with an invalid email and password', async () => {
       render(SignIn)
 
       const toggle = await screen.findByText(matchers.toggleSignUp)
