@@ -114,13 +114,11 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword
 } from 'firebase/auth'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { requiredRule, emailRule, minLengthRule } from '@/utils/validators'
 import { templateRef } from '@vueuse/core'
-import { nextTick } from 'vue'
 import { VForm } from 'vuetify/lib/components/index'
-import { FirebaseError } from 'firebase/app'
 import { HOME } from '@/router/namedRoutes'
 
 const auth = getAuth()
@@ -162,9 +160,7 @@ const onSignInAnonymously = async () => {
 
     router.push(redirectTo.value)
   } catch (error) {
-    if (error instanceof FirebaseError) {
-      form.error = error.message
-    }
+    form.error = 'There was an error signing you in. Please try again.'
   } finally {
     isLoading.value = false
   }
@@ -185,12 +181,10 @@ const onSignInOrSignUp = async () => {
 
     router.push(redirectTo.value)
   } catch (error) {
-    if (error instanceof FirebaseError) {
-      if (isSigningUp.value) {
-        form.error = 'There was an error creating your account. Please try again.'
-      } else {
-        form.error = 'There was an error signing you in. Please try again.'
-      }
+    if (isSigningUp.value) {
+      form.error = 'There was an error creating your account. Please try again.'
+    } else {
+      form.error = 'There was an error signing you in. Please try again.'
     }
   } finally {
     isLoading.value = false
@@ -204,9 +198,9 @@ const toggleSignUp = async (value: boolean) => {
   await nextTick()
 
   if (isSigningUp.value) {
-    formSectionElem.value?.scrollIntoView(false)
+    formSectionElem.value?.scrollIntoView?.(false)
   } else {
-    formSectionElem.value?.scrollIntoView(true)
+    formSectionElem.value?.scrollIntoView?.(true)
   }
 }
 </script>
