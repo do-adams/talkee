@@ -1,30 +1,34 @@
 import { render, type RenderOptions } from '@testing-library/vue'
 
-import { createPinia } from 'pinia'
+import type { Pinia } from 'pinia'
+import { createTestingPinia, type TestingPinia } from '@pinia/testing'
 import { createVuetify, type VuetifyOptions } from 'vuetify'
 import { createRouter, createWebHistory, type RouterOptions } from 'vue-router'
 
 interface CustomOptions {
-  render?: RenderOptions
-  router?: RouterOptions
-  vuetify?: VuetifyOptions
+  render: RenderOptions
+  pinia: Pinia | TestingPinia
+  router: RouterOptions
+  vuetify: VuetifyOptions
 }
 
-const defaultOptions: CustomOptions = {
-  router: { history: createWebHistory(), routes: [] },
+let defaultOptions: CustomOptions = {
+  render: {},
+  pinia: createTestingPinia(),
+  router: { history: createWebHistory(), routes: [{ path: '/', component: {} }] },
   vuetify: {}
 }
 
-const customRender = (ui: unknown, options: CustomOptions = {}) => {
-  options = { ...defaultOptions, ...options }
+const customRender = (ui: unknown, options?: Partial<CustomOptions>) => {
+  defaultOptions = { ...defaultOptions, ...options }
 
   render(ui, {
-    ...options.render,
+    ...defaultOptions.render,
     global: {
       plugins: [
-        createPinia(),
-        createRouter(options.router as RouterOptions),
-        createVuetify(options.vuetify)
+        defaultOptions.pinia,
+        createRouter(defaultOptions.router),
+        createVuetify(defaultOptions.vuetify)
       ]
     }
   })
