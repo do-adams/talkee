@@ -36,7 +36,7 @@ describe('SignIn', () => {
     vi.restoreAllMocks()
   })
 
-  describe('Sign In', () => {
+  describe('Sign In Feature', () => {
     test('User can toggle the sign up form', async () => {
       render(SignIn)
 
@@ -161,7 +161,7 @@ describe('SignIn', () => {
     })
   })
 
-  describe('Sign Up', () => {
+  describe('Sign Up Feature', () => {
     test('User can toggle the sign in form', async () => {
       render(SignIn)
 
