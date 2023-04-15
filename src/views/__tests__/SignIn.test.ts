@@ -18,6 +18,13 @@ import { render, fireEvent, screen } from '@/vitest/testing-library'
 import SignIn from '@/views/SignIn.vue'
 import { nextTick } from 'vue'
 
+const matchers = {
+  emailField: 'E-mail',
+  passwordField: 'Password',
+  signInAnonymouslyButton: 'Sign In Anonymously',
+  signInWithEmailButton: 'Sign In with Email'
+}
+
 describe('SignIn', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
@@ -27,9 +34,7 @@ describe('SignIn', () => {
     it('User can sign in anonymously', async () => {
       render(SignIn)
 
-      const button = await screen.findByText('Sign In Anonymously')
-
-      expect(button).toBeTruthy()
+      const button = await screen.findByText(matchers.signInAnonymouslyButton)
 
       await fireEvent.click(button)
 
@@ -39,13 +44,9 @@ describe('SignIn', () => {
     it('User cannot sign in with an invalid email and password', async () => {
       render(SignIn)
 
-      const emailField: HTMLInputElement = await screen.findByLabelText('E-mail')
-      const passwordField: HTMLInputElement = await screen.findByLabelText('Password')
-      const button = await screen.findByText('Sign In with Email')
-
-      expect(emailField).toBeTruthy()
-      expect(passwordField).toBeTruthy()
-      expect(button).toBeTruthy()
+      const emailField: HTMLInputElement = await screen.findByLabelText(matchers.emailField)
+      const passwordField: HTMLInputElement = await screen.findByLabelText(matchers.passwordField)
+      const button = await screen.findByText(matchers.signInWithEmailButton)
 
       await fireEvent.click(button)
 
@@ -69,16 +70,12 @@ describe('SignIn', () => {
       expect(signInWithEmailAndPassword).not.toHaveBeenCalledOnce()
     })
 
-    it('User can sign in with valid email and passowrd', async () => {
+    it('User can sign in with valid email and password', async () => {
       render(SignIn)
 
-      const emailField: HTMLInputElement = await screen.findByLabelText('E-mail')
-      const passwordField: HTMLInputElement = await screen.findByLabelText('Password')
-      const button = await screen.findByText('Sign In with Email')
-
-      expect(emailField).toBeTruthy()
-      expect(passwordField).toBeTruthy()
-      expect(button).toBeTruthy()
+      const emailField: HTMLInputElement = await screen.findByLabelText(matchers.emailField)
+      const passwordField: HTMLInputElement = await screen.findByLabelText(matchers.passwordField)
+      const button = await screen.findByText(matchers.signInWithEmailButton)
 
       const mockEmail = 'test@gmail.com'
       const mockPassword = '12345678'
