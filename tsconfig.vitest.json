@@ -1,7 +1,6 @@
 {
   "extends": "./tsconfig.app.json",
   "exclude": [],
-  "include": ["src/vitest/**/*", "src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
     "lib": [],
