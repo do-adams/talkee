@@ -9,7 +9,6 @@ interface Timestamp {
 export interface Channel extends Timestamp {
   creatorUid: UserId
   name: string
-  members: Array<UserId>
 }
 
 export interface Message extends Timestamp {

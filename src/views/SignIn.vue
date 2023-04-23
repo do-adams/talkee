@@ -114,7 +114,7 @@ import { requiredRule, emailRule, minLengthRule } from '@/utils/validators'
 import { templateRef } from '@vueuse/core'
 import { VForm } from 'vuetify/lib/components/index'
 import { HOME } from '@/router/namedRoutes'
-import type { User } from '@/firebase/types'
+import type { User } from '@/firebase/firestore/types'
 
 const auth = getAuth()
 
