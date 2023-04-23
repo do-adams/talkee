@@ -4,6 +4,9 @@ import {
   createUserWithEmailAndPassword
 } from '@/vitest/mocks/mockFirebaseAuth'
 
+// TODO: Fix false positive tests due to failure to mock firestore lib
+vi.mock('firebase/firestore')
+
 // Import after mocks
 import { render, fireEvent, screen } from '@/vitest/testing-library'
 import SignIn from '@/views/SignIn.vue'

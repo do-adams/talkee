@@ -112,14 +112,17 @@ import {
   getAuth,
   signInAnonymously,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  type UserCredential
 } from 'firebase/auth'
+import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { computed, reactive, ref, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { requiredRule, emailRule, minLengthRule } from '@/utils/validators'
 import { templateRef } from '@vueuse/core'
 import { VForm } from 'vuetify/lib/components/index'
 import { HOME } from '@/router/namedRoutes'
+import type { User } from '@/firebase/types'
 
 const auth = getAuth()
 
@@ -151,12 +154,27 @@ const rules = reactive({
   confirmPassword: () => (form.password === form.confirmPassword ? true : 'Passwords must match')
 })
 
+const createNewDbUser = async ({ user }: UserCredential) => {
+  const db = getFirestore()
+
+  const newUser: User = {
+    uid: user.uid,
+    email: user.email,
+    isAnonymous: user.isAnonymous,
+    createdAt: serverTimestamp()
+  }
+
+  const newUserRef = doc(db, 'users', newUser.uid)
+  await setDoc(newUserRef, newUser)
+}
+
 const onSignInAnonymously = async () => {
   try {
     isLoading.value = true
     form.error = ''
 
-    await signInAnonymously(auth)
+    const newUser = await signInAnonymously(auth)
+    await createNewDbUser(newUser)
 
     router.push(redirectTo.value)
   } catch (error) {
@@ -174,7 +192,8 @@ const onSignInOrSignUp = async () => {
     form.error = ''
 
     if (isSigningUp.value) {
-      await createUserWithEmailAndPassword(auth, form.email, form.password)
+      const newUser = await createUserWithEmailAndPassword(auth, form.email, form.password)
+      await createNewDbUser(newUser)
     } else {
       await signInWithEmailAndPassword(auth, form.email, form.password)
     }
