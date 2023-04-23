@@ -6,7 +6,9 @@ export const useAuthStore = defineStore('auth', () => {
   const auth = getAuth()
 
   const user = ref<User | null>(null)
-  const isAuthenticated = computed(() => !!user.value)
+  const userId = computed(() => (user.value ? user.value.uid : ''))
+
+  const isAuthenticated = computed(() => user.value !== null)
 
   const setUser = async (newUser: User | null) => (user.value = newUser)
 
@@ -16,6 +18,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     user,
+    userId,
     isAuthenticated,
     isReady: init
   }
