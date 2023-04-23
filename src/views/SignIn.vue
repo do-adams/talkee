@@ -15,7 +15,7 @@
   </section>
   <v-progress-linear :indeterminate="isLoading"></v-progress-linear>
   <section ref="formSection" class="mt-5 py-5">
-    <v-form ref="formComponent" @submit.prevent="onSignInOrSignUp" v-model="form.isValid">
+    <v-form @submit.prevent="onSignInOrSignUp" v-model="form.isValid">
       <v-row v-if="form.error" justify="center">
         <v-col cols="8" md="6">
           <v-alert type="error" :text="form.error"></v-alert>
@@ -57,10 +57,9 @@
           </v-expand-transition>
         </v-col>
       </v-row>
-      <v-row id="sign-in-buttons" class="mb-4" justify="center">
+      <v-row class="mb-4" justify="center">
         <v-btn
           v-if="isSigningUp"
-          key="sign-up-button"
           type="submit"
           :disabled="isLoading"
           variant="outlined"
@@ -73,7 +72,6 @@
         </v-btn>
         <v-btn
           v-else
-          key="sign-in-button"
           type="submit"
           :disabled="isLoading"
           variant="outlined"
@@ -88,18 +86,12 @@
       <v-row class="mb-5" justify="center">
         <a
           v-if="isSigningUp"
-          key="existing-account-link"
           href="javascript:void(0)"
           class="text-caption"
           @click="toggleSignUp(false)"
           >Already have an account? Sign in</a
         >
-        <a
-          v-else
-          key="new-account-link"
-          href="javascript:void(0)"
-          class="text-caption"
-          @click="toggleSignUp(true)"
+        <a v-else href="javascript:void(0)" class="text-caption" @click="toggleSignUp(true)"
           >Don't have an account? Sign up</a
         >
       </v-row>
@@ -133,7 +125,6 @@ const redirectTo = computed(() =>
 )
 
 const formSectionElem = templateRef<HTMLElement | null>('formSection')
-const formComponent = templateRef<InstanceType<typeof VForm> | null>('formComponent')
 
 const isLoading = ref(false)
 const isSigningUp = ref(false)
