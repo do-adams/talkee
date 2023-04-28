@@ -74,8 +74,6 @@ const createNewDbChannel = async (name: string) => {
   const channelsRef = collection(db, 'channels')
   const newChannelRef = await addDoc(channelsRef, newChannel)
 
-  console.dir(newChannelRef)
-
   return newChannelRef.id
 }
 
@@ -95,7 +93,6 @@ const onCreateChannel = async () => {
       }
     })
   } catch (error) {
-    console.dir(error)
     form.error = 'There was an error creating your channel. Please try again.'
   } finally {
     isLoading.value = false
