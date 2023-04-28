@@ -3,7 +3,7 @@ import type { NavigationGuard } from 'vue-router'
 import { SIGN_IN } from '@/router/namedRoutes'
 
 export const checkAuthentication: NavigationGuard = async (to, from, next) => {
-  const requiresAuth = to.meta.requiresAuth as boolean
+  const requiresAuth = to.meta.requiresAuth
   if (!requiresAuth) return next()
 
   const authStore = useAuthStore()

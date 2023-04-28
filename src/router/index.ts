@@ -18,6 +18,12 @@ import { useAuthStore } from '@/stores/auth'
 import { getAuth, signOut } from 'firebase/auth'
 import { checkAuthentication } from '@/router/navGuards'
 
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth?: boolean
+  }
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
