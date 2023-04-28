@@ -2,12 +2,20 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, create, update: if isOwner(userId);
     }
 
     match /channels/{channelId} {
       allow get, create;
-      allow list: if request.auth != null && request.auth.uid == resource.data.creatorUid;
+      allow list: if isOwner(resource.data.creatorUid);
+
+      match /messages/{messageId} {
+        allow read, create, update;
+      }
+    }
+
+    function isOwner(id) {
+      return request.auth != null && request.auth.uid == id;
     }
   }
 }
