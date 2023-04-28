@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { VIEW_CHANNEL } from '@/router/namedRoutes'
+import { CHANNELS_SHOW } from '@/router/namedRoutes'
 import { requiredRule } from '@/utils/validators'
 import { useAuthStore } from '@/stores/auth'
 import { getFirestore, serverTimestamp, addDoc, collection } from 'firebase/firestore'
@@ -87,7 +87,7 @@ const onCreateChannel = async () => {
     const channelId = await createNewDbChannel(form.name)
 
     router.push({
-      name: VIEW_CHANNEL,
+      name: CHANNELS_SHOW,
       params: {
         id: channelId
       }

@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import ChannelView from '@/views/channels/ChannelView.vue'
-import CreateChannel from '@/views/channels/CreateChannel.vue'
+import ChannelsShow from '@/views/channels/ChannelsShow.vue'
+import ChannelsNew from '@/views/channels/ChannelsNew.vue'
 import SignIn from '@/views/SignIn.vue'
 import HomeView from '../views/HomeView.vue'
 
 import {
-  CREATE_CHANNEL,
-  VIEW_CHANNEL,
+  CHANNELS_NEW,
+  CHANNELS_SHOW,
   SIGN_IN,
   SIGN_OUT,
   HOME,
@@ -28,17 +28,17 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/channels/create',
-      name: CREATE_CHANNEL,
-      component: CreateChannel,
+      path: '/channels/new',
+      name: CHANNELS_NEW,
+      component: ChannelsNew,
       meta: {
         requiresAuth: true
       }
     },
     {
       path: '/channels/:id',
-      name: VIEW_CHANNEL,
-      component: ChannelView
+      name: CHANNELS_SHOW,
+      component: ChannelsShow
     },
     {
       path: '/sign-in',

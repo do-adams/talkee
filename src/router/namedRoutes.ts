@@ -1,5 +1,5 @@
-export const CREATE_CHANNEL = 'CREATE_CHANNEL'
-export const VIEW_CHANNEL = 'VIEW_CHANNEL'
+export const CHANNELS_NEW = 'CHANNELS_NEW'
+export const CHANNELS_SHOW = 'CHANNELS_SHOW'
 export const SIGN_IN = 'SIGN_IN'
 export const SIGN_OUT = 'SIGN_OUT'
 export const HOME = 'HOME'
