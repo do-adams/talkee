@@ -47,17 +47,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { CREATE_CHANNEL, VIEW_CHANNEL, SIGN_IN, SIGN_OUT, HOME } from '@/router/namedRoutes'
 import type { RouteLocationNamedRaw } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
-type NavigationLink = RouteLocationNamedRaw & { text: string }
+const auth = useAuthStore()
 
-const links = ref<NavigationLink[]>([
-  { name: HOME, text: 'Home' },
-  { name: CREATE_CHANNEL, text: 'Create Channel' },
-  { name: VIEW_CHANNEL, params: { id: 'asdf' }, text: 'View Channel' },
-  { name: SIGN_IN, text: 'Sign In' },
-  { name: SIGN_OUT, text: 'Sign Out' }
-])
+type NavigationLink = RouteLocationNamedRaw & { text: string; disabled?: boolean }
+
+const links = computed<NavigationLink[]>(() =>
+  [
+    { name: HOME, text: 'Home' },
+    { name: CREATE_CHANNEL, text: 'Create Channel' },
+    { name: VIEW_CHANNEL, params: { id: 'asdf' }, text: 'View Channel' },
+    { name: SIGN_IN, text: 'Sign In', disabled: auth.isAuthenticated },
+    { name: SIGN_OUT, text: 'Sign Out', disabled: !auth.isAuthenticated }
+  ].filter((l) => !l.disabled)
+)
 </script>
