@@ -26,7 +26,7 @@
           </v-row>
           <v-row class="mb-5" justify="center">
             <v-btn type="submit" :disabled="isLoading" variant="outlined" prepend-icon="mdi-radio">
-              <template v-slot:prepend>
+              <template #prepend>
                 <v-icon></v-icon>
               </template>
               Create

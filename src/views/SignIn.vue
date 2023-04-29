@@ -7,7 +7,7 @@
       :disabled="isLoading"
       @click="onSignInAnonymously"
     >
-      <template v-slot:prepend>
+      <template #prepend>
         <v-icon></v-icon>
       </template>
       Sign In Anonymously
@@ -65,7 +65,7 @@
           variant="outlined"
           prepend-icon="mdi-card-account-details-outline"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-icon></v-icon>
           </template>
           Sign Up
@@ -77,7 +77,7 @@
           variant="outlined"
           prepend-icon="mdi-email"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-icon></v-icon>
           </template>
           Sign In with Email
