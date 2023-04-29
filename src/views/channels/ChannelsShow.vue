@@ -11,17 +11,24 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { HOME } from '@/router/namedRoutes'
-import { doc, getDoc, getFirestore } from 'firebase/firestore'
+import {
+  doc,
+  DocumentSnapshot,
+  getDoc,
+  getFirestore,
+  query,
+  type DocumentData
+} from 'firebase/firestore'
 import type { Channel } from '@/firebase/firestore/types'
 import { useErrorSnackbar } from '@/composables/useErrorSnackbar'
 
-let initialChannel: Channel
+let channelSnapshot: DocumentSnapshot<DocumentData>
 
 export default defineComponent({
   setup() {
     const db = getFirestore()
 
-    const channel = ref<Channel>(initialChannel)
+    const channel = ref<Channel>(channelSnapshot.data() as Channel)
 
     return {
       channel
@@ -32,15 +39,15 @@ export default defineComponent({
     const channelId = to.params.id as string
     const snapshot = await getDoc(doc(db, 'channels', channelId))
 
-    if (snapshot.exists()) {
-      initialChannel = snapshot.data() as Channel
-      return true
+    if (!snapshot.exists()) {
+      const { message } = useErrorSnackbar()
+      message.value = 'Channel not found. Please try a different one.'
+
+      return { name: HOME }
     }
 
-    const { message } = useErrorSnackbar()
-    message.value = 'Channel not found. Please try a different one.'
-
-    return { name: HOME }
+    channelSnapshot = snapshot
+    return true
   }
 })
 </script>
