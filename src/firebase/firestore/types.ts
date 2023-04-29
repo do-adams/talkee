@@ -14,7 +14,7 @@ export interface Channel extends Timestamp {
 export interface Message extends Timestamp {
   authorUid: UserId | null
   text: string
-  audioURL: string
+  audioURL: string | null
 }
 
 export interface User extends Timestamp {
