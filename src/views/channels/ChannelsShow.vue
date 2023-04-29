@@ -1,31 +1,46 @@
 <template>
   <h1>Channel</h1>
-  <h3>{{ channel?.name }}</h3>
-  <p>{{ error }}</p>
+  <h3>{{ channel.name }}</h3>
+  <section>
+    <form @submit.prevent>
+      <v-list></v-list>
+    </form>
+  </section>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
+import { HOME } from '@/router/namedRoutes'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
-import { useRoute } from 'vue-router'
 import type { Channel } from '@/firebase/firestore/types'
-import { onBeforeMount, ref } from 'vue'
+import { useErrorSnackbar } from '@/composables/useErrorSnackbar'
 
-const route = useRoute()
+let initialChannel: Channel
 
-const db = getFirestore()
+export default defineComponent({
+  setup() {
+    const db = getFirestore()
 
-const channel = ref<Channel>()
-const error = ref('')
+    const channel = ref<Channel>(initialChannel)
 
-onBeforeMount(async function setChannel() {
-  const channelId = route.params.id as string
-  const snapshot = await getDoc(doc(db, 'channels', channelId))
+    return {
+      channel
+    }
+  },
+  async beforeRouteEnter(to) {
+    const db = getFirestore()
+    const channelId = to.params.id as string
+    const snapshot = await getDoc(doc(db, 'channels', channelId))
 
-  if (snapshot.exists()) {
-    channel.value = snapshot.data() as Channel
-  } else {
-    // TODO: Handle error in nav guard
-    error.value = 'Channel not found.'
+    if (snapshot.exists()) {
+      initialChannel = snapshot.data() as Channel
+      return true
+    }
+
+    const { message } = useErrorSnackbar()
+    message.value = 'Channel not found. Please try a different one.'
+
+    return { name: HOME }
   }
 })
 </script>
