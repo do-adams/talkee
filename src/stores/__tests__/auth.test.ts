@@ -17,7 +17,6 @@ describe('Auth Store', () => {
 
   it('Is not authenticated by default', () => {
     const auth = useAuthStore()
-    expect(auth.user).toBeNull()
     expect(auth.isAuthenticated).toBeFalsy()
   })
 })

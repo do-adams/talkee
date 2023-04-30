@@ -1,25 +1,44 @@
-import { getAuth, onAuthStateChanged, type User } from 'firebase/auth'
+import { getAuth, onAuthStateChanged, type User as AuthUser } from 'firebase/auth'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
+
+export interface StoreUser {
+  uid: AuthUser['uid']
+  email: AuthUser['email']
+  isAnonymous: AuthUser['isAnonymous']
+}
+
+export const getEmptyUser = (): StoreUser => ({
+  uid: '',
+  email: '',
+  isAnonymous: false
+})
 
 export const useAuthStore = defineStore('auth', () => {
-  const auth = getAuth()
+  // Firebase Authentication state (trinary)
+  const isAuthenticated = ref<boolean | undefined>()
 
-  const user = ref<User | null>(null)
-  const userId = computed(() => (user.value ? user.value.uid : ''))
+  const user = ref<StoreUser>(getEmptyUser())
 
-  const isAuthenticated = computed(() => user.value !== null)
-
-  const setUser = async (newUser: User | null) => (user.value = newUser)
+  const setUser = async (newUser: AuthUser | null) => {
+    if (newUser) {
+      isAuthenticated.value = true
+      user.value.uid = newUser.uid
+      user.value.email = newUser.email
+      user.value.isAnonymous = newUser.isAnonymous
+    } else {
+      isAuthenticated.value = false
+      user.value = getEmptyUser()
+    }
+  }
 
   const init = new Promise<void>((resolve) =>
-    onAuthStateChanged(auth, (newUser) => setUser(newUser).finally(resolve))
+    onAuthStateChanged(getAuth(), (newUser) => setUser(newUser).finally(resolve))
   )
 
   return {
-    user,
-    userId,
     isAuthenticated,
+    user,
     isReady: init
   }
 })

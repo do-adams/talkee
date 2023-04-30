@@ -66,7 +66,7 @@ const createNewDbChannel = async (name: string) => {
   const db = getFirestore()
 
   const newChannel: Channel = {
-    creatorUid: authStore.userId,
+    creatorUid: authStore.user.uid,
     name: name,
     createdAt: serverTimestamp()
   }

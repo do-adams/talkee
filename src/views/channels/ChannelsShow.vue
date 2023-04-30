@@ -70,7 +70,6 @@ import type { Channel, Message } from '@/firebase/firestore/types'
 import { useErrorSnackbar } from '@/composables/useErrorSnackbar'
 import { requiredRule } from '@/utils/validators'
 import { useAuthStore } from '@/stores/auth'
-import { storeToRefs } from 'pinia'
 import { templateRef } from '@vueuse/core'
 import type { VForm } from 'vuetify/lib/components/VForm/index'
 import type { VList } from 'vuetify/lib/components/VList/index'
@@ -79,7 +78,7 @@ let channelSnapshot: DocumentSnapshot<DocumentData>
 
 export default defineComponent({
   setup() {
-    const { userId } = storeToRefs(useAuthStore())
+    const authStore = useAuthStore()
     const db = getFirestore()
 
     const isLoading = ref(false)
@@ -109,7 +108,7 @@ export default defineComponent({
         form.error = ''
 
         const newMessage: Message = {
-          authorUid: userId.value,
+          authorUid: authStore.isAuthenticated ? authStore.user.uid : null,
           text: form.message,
           audioURL: null,
           createdAt: serverTimestamp()
