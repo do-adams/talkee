@@ -55,107 +55,117 @@
   </section>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { defineComponent, nextTick, reactive, ref } from 'vue'
-import { HOME } from '@/router/namedRoutes'
-import {
-  doc,
-  DocumentSnapshot,
-  getDoc,
-  getFirestore,
-  serverTimestamp,
-  type DocumentData
-} from 'firebase/firestore'
-import type { Channel, Message } from '@/firebase/firestore/types'
+import { useRoute } from 'vue-router'
 import { useErrorSnackbar } from '@/composables/useErrorSnackbar'
+import { HOME } from '@/router/namedRoutes'
+import { doc, getDoc, getFirestore, serverTimestamp } from 'firebase/firestore'
+import type { Channel, Message } from '@/firebase/firestore/types'
 import { requiredRule } from '@/utils/validators'
 import { useAuthStore } from '@/stores/auth'
-import { templateRef } from '@vueuse/core'
 import type { VForm } from 'vuetify/lib/components/VForm/index'
 import type { VList } from 'vuetify/lib/components/VList/index'
 
-let channelSnapshot: DocumentSnapshot<DocumentData>
+const db = getFirestore()
+const authStore = useAuthStore()
+
+const route = useRoute()
+const channelId = route.params.id as string
+
+const channel = ref<Channel>({
+  creatorUid: '',
+  name: '',
+  createdAt: ''
+})
+
+getChannelById(channelId).then(({ channel: ch, snapshot }) => {
+  channel.value = ch
+})
+
+const messageList = ref<InstanceType<typeof VList> | null>(null)
+const messageForm = ref<InstanceType<typeof VForm> | null>(null)
+
+const messages = reactive<Message[]>([])
+
+const isLoading = ref(false)
+
+const form = reactive({
+  message: '',
+  error: ''
+})
+
+const rules = reactive({
+  required: requiredRule('Please enter a message')
+})
+
+const onSubmitMessage = async () => {
+  const validation = await messageForm.value?.validate()
+
+  if (!validation?.valid) return
+
+  try {
+    isLoading.value = true
+    form.error = ''
+
+    const newMessage: Message = {
+      authorUid: authStore.isAuthenticated ? authStore.user.uid : null,
+      text: form.message,
+      audioURL: null,
+      createdAt: serverTimestamp()
+    }
+
+    messages.push(newMessage)
+
+    form.message = ''
+
+    await nextTick()
+
+    const messageListElem = messageList.value?.$el as Element | undefined
+
+    messageListElem?.scroll({
+      behavior: 'smooth',
+      top: messageListElem?.scrollHeight
+    })
+  } catch (error) {
+    form.error = 'There was an error creating your message. Please try again.'
+  } finally {
+    isLoading.value = false
+  }
+}
+</script>
+
+<script lang="ts">
+async function getChannelById(channelId: string) {
+  const db = getFirestore()
+  const snapshot = await getDoc(doc(db, 'channels', channelId))
+
+  if (!snapshot.exists()) throw new Error('Channel not found. Please try a different one.')
+
+  const channel = snapshot.data() as Channel
+
+  return {
+    channel,
+    snapshot
+  }
+}
 
 export default defineComponent({
-  setup() {
-    const authStore = useAuthStore()
-    const db = getFirestore()
+  async beforeRouteEnter(to) {
+    try {
+      const channelId = to.params.id as string
+      await getChannelById(channelId)
+      return true
+    } catch (error) {
+      if (error instanceof Error) {
+        const { message } = useErrorSnackbar()
+        message.value = error.message
 
-    const isLoading = ref(false)
-
-    const channel = ref<Channel>(channelSnapshot.data() as Channel)
-    const messages = reactive<Message[]>([])
-
-    const messageList = templateRef<InstanceType<typeof VList> | null>('messageList')
-    const messageForm = templateRef<InstanceType<typeof VForm> | null>('messageForm')
-
-    const form = reactive({
-      message: '',
-      error: ''
-    })
-
-    const rules = reactive({
-      required: requiredRule('Please enter a message')
-    })
-
-    const onSubmitMessage = async () => {
-      const validation = await messageForm.value?.validate()
-
-      if (!validation?.valid) return
-
-      try {
-        isLoading.value = true
-        form.error = ''
-
-        const newMessage: Message = {
-          authorUid: authStore.isAuthenticated ? authStore.user.uid : null,
-          text: form.message,
-          audioURL: null,
-          createdAt: serverTimestamp()
-        }
-
-        messages.push(newMessage)
-
-        form.message = ''
-
-        await nextTick()
-
-        const messageListElem = messageList.value?.$el as Element | undefined
-
-        messageListElem?.scroll({
-          behavior: 'smooth',
-          top: messageListElem?.scrollHeight
-        })
-      } catch (error) {
-        form.error = 'There was an error creating your message. Please try again.'
-      } finally {
-        isLoading.value = false
+        return { name: HOME }
+      } else {
+        throw error
       }
     }
-
-    return {
-      isLoading,
-      channel,
-      messages,
-      form,
-      rules,
-      onSubmitMessage
-    }
-  },
-  async beforeRouteEnter(to) {
-    const db = getFirestore()
-    const channelId = to.params.id as string
-    const snapshot = await getDoc(doc(db, 'channels', channelId))
-
-    if (!snapshot.exists()) {
-      const { message } = useErrorSnackbar()
-      message.value = 'Channel not found. Please try a different one.'
-
-      return { name: HOME }
-    }
-
-    channelSnapshot = snapshot
-    return true
   }
 })
 </script>
