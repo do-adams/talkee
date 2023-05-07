@@ -40,7 +40,8 @@ const router = createRouter({
     {
       path: '/channels/:id',
       name: CHANNELS_SHOW,
-      component: ChannelsShow
+      component: ChannelsShow,
+      props: true
     },
     {
       path: '/sign-in',

@@ -58,7 +58,6 @@
 <script setup lang="ts">
 import { defineComponent, nextTick, reactive, ref } from 'vue'
 import { usePageTitle, DEFAULT_TITLE } from '@/composables/usePageTitle'
-import { useRoute } from 'vue-router'
 import { useErrorSnackbar } from '@/composables/useErrorSnackbar'
 import { HOME } from '@/router/namedRoutes'
 import { doc, getDoc, getFirestore, serverTimestamp } from 'firebase/firestore'
@@ -68,11 +67,12 @@ import { useAuthStore } from '@/stores/auth'
 import type { VForm } from 'vuetify/lib/components/VForm/index'
 import type { VList } from 'vuetify/lib/components/VList/index'
 
+const props = defineProps<{
+  id: string
+}>()
+
 const db = getFirestore()
 const authStore = useAuthStore()
-
-const route = useRoute()
-const channelId = route.params.id as string
 
 const channel = ref<Channel>({
   creatorUid: '',
@@ -80,7 +80,7 @@ const channel = ref<Channel>({
   createdAt: ''
 })
 
-getChannelById(channelId).then(({ channel: ch, snapshot }) => {
+getChannelById(props.id).then(({ channel: ch, snapshot }) => {
   const title = usePageTitle()
   title.value = `${DEFAULT_TITLE} - ${ch.name} Channel`
 
