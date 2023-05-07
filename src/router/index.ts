@@ -43,13 +43,13 @@ const router = createRouter({
     {
       path: '/sign-in',
       name: SIGN_IN,
-      beforeEnter: async (to, from, next) => {
+      beforeEnter: async (to, from) => {
         const authStore = useAuthStore()
 
         await authStore.isReady
-        if (authStore.isAuthenticated) return next({ name: HOME })
+        if (authStore.isAuthenticated) return { name: HOME }
 
-        return next()
+        return true
       },
       component: SignIn
     },
