@@ -1,9 +1,9 @@
 <template>
   <v-app>
     <v-main>
-      <talkee-layout>
+      <default-layout>
         <router-view />
-      </talkee-layout>
+      </default-layout>
       <v-snackbar v-model="showSnackbar">
         {{ message }}
         <template #actions>
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import TalkeeLayout from '@/layouts/TalkeeLayout.vue'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { useErrorSnackbar } from '@/composables/useErrorSnackbar'
 
 const { message, showSnackbar } = useErrorSnackbar()
