@@ -8,8 +8,7 @@
           <v-card>
             <v-card-text>
               <v-list ref="messageList" class="message-list">
-                <!-- TODO: Use timestamp from Firestore as the key value -->
-                <v-list-item v-for="(message, index) in messages" :key="index">
+                <v-list-item v-for="[message, id] in messages" :key="id">
                   {{ message.text }}
                 </v-list-item>
               </v-list>
@@ -56,11 +55,22 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, nextTick, reactive, ref } from 'vue'
+import { defineComponent, nextTick, onUnmounted, reactive, ref } from 'vue'
 import { usePageTitle, DEFAULT_TITLE } from '@/composables/usePageTitle'
 import { useErrorSnackbar } from '@/composables/useErrorSnackbar'
 import { HOME } from '@/router/namedRoutes'
-import { doc, getDoc, getFirestore, serverTimestamp } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  CollectionReference,
+  doc,
+  getDoc,
+  getFirestore,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp
+} from 'firebase/firestore'
 import type { Channel, Message } from '@/firebase/firestore/types'
 import { requiredRule } from '@/utils/validators'
 import { useAuthStore } from '@/stores/auth'
@@ -90,7 +100,22 @@ getChannelById(props.id).then(({ channel: ch, snapshot }) => {
 const messageList = ref<InstanceType<typeof VList> | null>(null)
 const messageForm = ref<InstanceType<typeof VForm> | null>(null)
 
-const messages = reactive<Message[]>([])
+const messages = reactive<[message: Message, id: string][]>([])
+
+const messagesRef = collection(db, 'channels', props.id, 'messages') as CollectionReference<Message>
+const messagesQuery = query(messagesRef, orderBy('createdAt'))
+
+const unsubscribeFromMessagesSnapshot = onSnapshot(messagesQuery, (snapshot) => {
+  messages.splice(0, messages.length)
+
+  snapshot.forEach((s) => {
+    messages.push([s.data(), s.id])
+  })
+})
+
+onUnmounted(() => {
+  unsubscribeFromMessagesSnapshot()
+})
 
 const isLoading = ref(false)
 
@@ -119,7 +144,7 @@ const onSubmitMessage = async () => {
       createdAt: serverTimestamp()
     }
 
-    messages.push(newMessage)
+    await addDoc(messagesRef, newMessage)
 
     form.message = ''
 
