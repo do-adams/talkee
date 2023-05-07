@@ -1,6 +1,7 @@
 import { useAuthStore } from '@/stores/auth'
-import type { NavigationGuard } from 'vue-router'
+import type { NavigationGuard, NavigationHookAfter } from 'vue-router'
 import { SIGN_IN } from '@/router/namedRoutes'
+import { usePageTitle, DEFAULT_TITLE } from '@/composables/usePageTitle'
 
 export const checkAuthentication: NavigationGuard = async (to, from) => {
   const requiresAuth = to.meta.requiresAuth
@@ -17,4 +18,12 @@ export const checkAuthentication: NavigationGuard = async (to, from) => {
       redirect_to: to.path
     }
   }
+}
+
+export const setTitle: NavigationHookAfter = (to) => {
+  const routeTitle = to.meta.title
+  if (!routeTitle) return
+
+  const title = usePageTitle()
+  title.value = `${DEFAULT_TITLE} - ${routeTitle}`
 }

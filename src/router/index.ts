@@ -16,11 +16,12 @@ import {
 
 import { useAuthStore } from '@/stores/auth'
 import { getAuth, signOut } from 'firebase/auth'
-import { checkAuthentication } from '@/router/navGuards'
+import { checkAuthentication, setTitle } from '@/router/navGuards'
 
 declare module 'vue-router' {
   interface RouteMeta {
     requiresAuth?: boolean
+    title?: string
   }
 }
 
@@ -32,7 +33,8 @@ const router = createRouter({
       name: CHANNELS_NEW,
       component: ChannelsNew,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        title: 'New Channel'
       }
     },
     {
@@ -51,7 +53,10 @@ const router = createRouter({
 
         return true
       },
-      component: SignIn
+      component: SignIn,
+      meta: {
+        title: 'Sign In'
+      }
     },
     {
       path: '/sign-out',
@@ -65,12 +70,18 @@ const router = createRouter({
         )
 
         return { name: HOME }
+      },
+      meta: {
+        title: 'Sign Out'
       }
     },
     {
       path: '/',
       name: HOME,
-      component: HomeView
+      component: HomeView,
+      meta: {
+        title: 'Home'
+      }
     },
     {
       path: '/:pathMatch(.*)*',
@@ -81,5 +92,6 @@ const router = createRouter({
 })
 
 router.beforeEach(checkAuthentication)
+router.afterEach(setTitle)
 
 export default router

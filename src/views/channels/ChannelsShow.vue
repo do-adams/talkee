@@ -57,6 +57,7 @@
 
 <script setup lang="ts">
 import { defineComponent, nextTick, reactive, ref } from 'vue'
+import { usePageTitle, DEFAULT_TITLE } from '@/composables/usePageTitle'
 import { useRoute } from 'vue-router'
 import { useErrorSnackbar } from '@/composables/useErrorSnackbar'
 import { HOME } from '@/router/namedRoutes'
@@ -80,6 +81,9 @@ const channel = ref<Channel>({
 })
 
 getChannelById(channelId).then(({ channel: ch, snapshot }) => {
+  const title = usePageTitle()
+  title.value = `${DEFAULT_TITLE} - ${ch.name} Channel`
+
   channel.value = ch
 })
 
