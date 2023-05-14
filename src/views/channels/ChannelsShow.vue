@@ -87,7 +87,7 @@ const authStore = useAuthStore()
 const channel = ref<Channel>({
   creatorUid: '',
   name: '',
-  createdAt: ''
+  createdAt: null
 })
 
 getChannelById(props.id).then(({ channel: ch, snapshot }) => {
