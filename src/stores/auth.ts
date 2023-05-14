@@ -15,7 +15,14 @@ export const getEmptyUser = (): StoreUser => ({
 })
 
 export const useAuthStore = defineStore('auth', () => {
-  // Firebase Authentication state (trinary)
+  /**
+   * Firebase Authentication state is trinary:
+   *   - true: user is authenticated
+   *   - false: user is not authenticated
+   *   - undefined: unknown
+   *
+   * Read more at: https://medium.com/firebase-developers/why-is-my-currentuser-null-in-firebase-auth-4701791f74f0
+   */
   const isAuthenticated = ref<boolean | undefined>()
 
   const user = ref<StoreUser>(getEmptyUser())
